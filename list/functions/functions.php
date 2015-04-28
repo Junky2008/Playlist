@@ -1,9 +1,8 @@
 <?php
 
-function getDirList()
+function getDirList($directory)
 {
     $list = array();
-    $directory = "../";
     $it = new RecursiveDirectoryIterator($directory);
 
     $it->rewind();
@@ -19,10 +18,19 @@ function getDirList()
     return $list;
 }
 
-function getFileList($dir)
+function getSubDirList($directory)
 {
     $list = array();
-    $directory = "../" . $dir;
+    foreach(getDirList($directory) as $value)
+    {
+        $list[$value] = getDirList($directory . $value);
+    }
+    return $list;
+}
+
+function getFileList($directory, $basedir)
+{
+    $list = array();
     $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
 
     $it->rewind();
@@ -30,7 +38,7 @@ function getFileList($dir)
     {
         if(!$it->isDot() && !$it->isDir())
         {
-            $list[] = str_replace("../", "http://music.bloodrush.nl:81/", $it->key());
+            $list[] = str_replace($basedir, "http://music.bloodrush.nl:81/", $it->key());
         }
         $it->next();
     }

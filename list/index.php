@@ -1,13 +1,16 @@
 <?php
 
-include("functions.php");
+include("functions/functions.php");
+
+$basedir = "../";
+
 $HTML = "";
 if($_POST) {
     $playlist = getcwd() . "/list.m3u";
     $playlistHandle = fopen($playlist, 'w') or die("Creation failed");
     foreach($_POST as $value)
     {
-        foreach(getFileList($value) as $file)
+        foreach(getFileList($basedir . $value, $basedir) as $file)
         {
             fwrite($playlistHandle, $file . "\n");
         }
@@ -19,7 +22,7 @@ if($_POST) {
     readfile($playlist);
 } else {
     $HTML .= "<form method='post'>";
-    foreach (getDirList() as $key => $value) {
+    foreach (getDirList($basedir) as $key => $value) {
         $HTML .= "<input type='checkbox' name=" . $key . " value=\"" . $value . "\">" . $value . "</input></br>";
     }
     $HTML .= "<input type='submit' value='Get list' />";
